@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원 정보</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"/>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            color: #343a40;
+        }
+        .header {
+            background: #6c757d;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary {
+            background: #007bff;
+            border: none;
+        }
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+        .form-control {
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1 class="mb-3">My Blog</h1>
+    <h4 class="mb-3">블로그에 오신 것을 환영합니다.</h4>
+</div>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="mb-4">회원 정보</h2>
+            <p><strong>이메일:</strong> <span th:text="${member.email}"></span></p>
+            <p><strong>이름:</strong> <span th:text="${member.name != null ? member.name : '이름이 지정되지 않았습니다.'}"></span></p>
+
+            <h3 class="mt-4">이름 수정</h3>
+            <form id="modifyForm" th:data-member-id="${member.id}">
+                <div class="form-group">
+                    <label for="username">새 이름</label>
+                    <input type="text" id="username" name="username" class="form-control" placeholder="새 이름을 입력하세요" required>
+                </div>
+                <button type="button" id="modifyButton" class="btn btn-primary">수정</button>
+                <a th:href="@{/}" class="btn btn-secondary">취소</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const modifyButton = document.getElementById('modifyButton');
+        const modifyForm = document.getElementById('modifyForm');
+
+        if (modifyButton && modifyForm) {
+            modifyButton.addEventListener('click', event => {
+                const memberId = modifyForm.dataset.memberId;
+
+                fetch(`/api/member/${memberId}`, {
+                    method: 'PUT',
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        username: document.getElementById('username').value
+                    })
+                })
+                    .then(() => {
+                        alert('수정이 완료되었습니다.');
+                        location.replace(`/posts`);
+                    });
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
