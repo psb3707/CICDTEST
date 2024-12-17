@@ -19,7 +19,10 @@ jobs:
       - name: application.yml 만들기
         run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./src/main/resources/application.yml
 
-      - name: 테스트 및 빌드하기
+      - name: ./gradlew 권한 변경
+        run: chmod +x ./gradlew
+
+      - name: 프로젝드 빌드하기
         run: ./gradlew clean build
 
       - name: 파일 이름 변경하기
