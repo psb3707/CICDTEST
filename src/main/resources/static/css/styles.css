@@ -1,0 +1,53 @@
+
+body {
+font-family: 'Arial', sans-serif; / 타이포그래피 설정 /
+line-height: 1.6; / 가독성을 위한 줄 간격 /
+color: #333; / 기본 텍스트 색상 /
+margin: 0;
+padding: 0;
+background-color: #f4f4f4; / 부드러운 배경색 */
+}
+
+.container {
+max-width: 800px; / 최대 너비 설정 /
+margin: 0 auto; / 중앙 정렬 /
+padding: 20px; / 패딩 /
+background: #fff; / 글 내용 배경 /
+box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); / 그림자 효과 */
+}
+
+h1 {
+font-size: 2.5em; / 제목 크기 /
+color: #2c3e50; / 제목 색상 /
+margin-bottom: 10px; / 하단 여백 */
+}
+
+h2, h3 {
+color: #34495e; / 서브 제목 색상 */
+}
+
+p {
+margin-bottom: 15px; / 본문 단락 여백 */
+}
+
+.button {
+display: inline-block; / 버튼 형태 /
+padding: 10px 20px; / 패딩 /
+background-color: #3498db; / 버튼 색상 /
+color: #ffffff; / 글자 색 /
+text-decoration: none; / 밑줄 제거 /
+border-radius: 5px; / 모서리 둥글게 */
+}
+
+.button:hover {
+background-color: #2980b9; / 호버 시 색상 변화 */
+}
+
+@media (max-width: 600px) {
+.container {
+padding: 10px; / 작은 화면에서 패딩 감소 */
+}
+h1 {
+    font-size: 2em; /* 제목 크기 감소 */
+}
+}

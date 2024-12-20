@@ -21,12 +21,17 @@ public class Comment {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 
-    public static Comment createComment(Post post, String content) {
+    public static Comment createComment(Post post, Member member, String content) {
 
         Comment comment = Comment.builder()
+                .member(member)
                 .post(post)
                 .content(content)
                 .build();

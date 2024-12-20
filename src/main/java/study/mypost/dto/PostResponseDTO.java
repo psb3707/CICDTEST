@@ -18,7 +18,7 @@ public class PostResponseDTO {
     private String content;
     private LocalDateTime createdAt;
     private List<String> tags = new ArrayList<>();
-    private List<String> comments = new ArrayList<>();
+    private List<CommentResponseDTO> comments = new ArrayList<>();
 
     public PostResponseDTO(Post post) {
         this.id = post.getId();
@@ -32,8 +32,8 @@ public class PostResponseDTO {
         }
 
         for(Comment comment : post.getComments()) {
-            String content = comment.getContent();
-            this.comments.add(content);
+            CommentResponseDTO commentResponseDTO = new CommentResponseDTO(comment);
+            this.comments.add(commentResponseDTO);
         }
     }
 }

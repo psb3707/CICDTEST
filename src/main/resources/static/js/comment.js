@@ -17,7 +17,7 @@ if(commentButton){
         })
             .then(() => {
                 alert('댓글이 작성되었습니다.');
-                location.replace(`/posts/${id}`);
+                window.location.reload();
             });
     });
 }

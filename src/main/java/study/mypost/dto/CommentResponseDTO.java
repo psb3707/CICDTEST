@@ -10,9 +10,11 @@ import java.util.List;
 public class CommentResponseDTO {
     private String content;
     private Long post_id;
+    private String nickname;
 
     public CommentResponseDTO(Comment comment) {
         this.post_id = comment.getPost().getId();
         this.content = comment.getContent();
+        this.nickname = comment.getMember().getName();
     }
 }
