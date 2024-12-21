@@ -1,6 +1,7 @@
 package study.mypost.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import study.mypost.domain.Member;
 import study.mypost.domain.Post;
 import study.mypost.dto.CommentCreateDTO;
 import study.mypost.dto.CommentResponseDTO;
+import study.mypost.dto.CommentUpdateDTO;
 import study.mypost.exception.CustomPostException;
 import study.mypost.exception.ErrorCode;
 import study.mypost.repository.CommentRepository;
@@ -18,6 +20,7 @@ import study.mypost.repository.PostRepository;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Log4j2
 public class CommentService {
 
     private final CommentRepository commentRepository;
@@ -38,5 +41,28 @@ public class CommentService {
         Comment result = commentRepository.save(comment);
 
         return new CommentResponseDTO(result);
+    }
+
+    @Transactional
+    public Long updateComment(Long id, CommentUpdateDTO request) {
+
+        Comment comment = commentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No Comment"));
+
+        comment.updateContent(request.getBody());
+
+        log.info(comment);
+
+        commentRepository.save(comment);
+
+        log.info(comment);
+
+        return comment.getId();
+    }
+
+    @Transactional
+    public Long deleteComment(Long id) {
+        commentRepository.deleteById(id);
+        return id;
     }
 }

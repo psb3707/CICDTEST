@@ -21,19 +21,18 @@
                 <div class="card-header">
                     <h1 class="fw-bolder mb-1" th:text="${post.title}"></h1>
                     <div class="text-muted fst-italic" th:text="|Posted on ${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}|"></div>
-                </div>
-                <div class="card-body">
-                    <section class="mb-5">
-                        <p class="fs-5 mb-4" th:text="${post.content}"></p>
-                    </section>
-
-                    <!-- 버튼 그룹 -->
                     <div class="d-flex justify-content-end gap-2">
                         <button type="button" id="modify-btn"
                                 th:onclick="|location.href='@{/new-post?id={postId}(postId=${post.id})}'|"
                                 class="btn btn-primary btn-sm">수정</button>
                         <button type="button" id="delete-btn" class="btn btn-secondary btn-sm">삭제</button>
                     </div>
+                </div>
+                <div class="card-body">
+                    <section class="mb-5">
+                        <p class="fs-5 mb-4" th:text="${post.content}"></p>
+                    </section>
+
                 </div>
             </article>
             <div class="mt-5">
@@ -42,8 +41,31 @@
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <span th:text="${comment.nickname}"></span>
                             <div class="ms-auto d-flex gap-3">
-                                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#example">수정</button>
-                                <button type="button" class="btn btn-sm btn-outline-danger comment-delete-btn">삭제</button>
+                                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#comment-edit-modal"
+                                th:data-bs-id="${id}" th:data-bs-body="${body}" th:data-bs-post-id="${post.id}">수정</button>
+                                <button type="button" class="btn btn-sm btn-outline-danger comment-delete-btn" th:data-comment-id="${id}">삭제</button>
+                                <div class="modal fade" id="comment-edit-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">댓글 수정</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">댓글 내용</label>
+                                                        <textarea th:type="text" class="form-control" rows="3" id="edit-comment-body"></textarea>
+                                                    </div>
+                                                    <input type="hidden" id="edit-comment-id">
+                                                    <input type="hidden" id="edit-comment-post-id">
+                                                    <button type="button" class="btn btn-primary" id="comment-update-btn">수정 완료</button>
+                                                </form>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="card-body" th:text="${comment.content}">
@@ -65,5 +87,78 @@
 
 <script src="/js/post.js"></script>
 <script src="/js/comment.js"></script>
+<script>
+    {
+        const commentEditModal = document.querySelector("#comment-edit-modal");
+        commentEditModal.addEventListener("show.bs.modal", function (event){
+            const triggerBtn = event.relatedTarget;
+            const id = triggerBtn.getAttribute("data-bs-id");
+            const body = triggerBtn.getAttribute("data-bs-body");
+            const postId = triggerBtn.getAttribute("data-bs-post-id");
+
+            document.querySelector("#edit-comment-id").value = id;
+            document.querySelector("#edit-comment-body").value = body;
+            document.querySelector("#edit-comment-post-id").value = postId;
+
+        })
+    }
+    {
+        const commentUpdateBtn = document.querySelector("#comment-update-btn");
+        commentUpdateBtn.addEventListener("click", function (){
+            const comment = {
+                id: document.querySelector("#edit-comment-id").value,
+                body: document.querySelector("#edit-comment-body").value,
+                post_id: document.querySelector("#edit-comment-post-id").value
+            };
+
+            console.log(comment);
+
+            const url = "/api/comments/" + comment.id;
+            fetch(url, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(comment)
+            }).then(response => {
+                const msg = (response.ok) ? "댓글이 수정됐습니다." : "댓글 수정 실패..!";
+                alert(msg);
+                window.location.reload();
+            })
+        });
+
+    }
+    {
+        const commentDeleteBtn = document.querySelectorAll(".comment-delete-btn");
+
+        commentDeleteBtn.forEach(btn => {
+            btn.addEventListener("click", (event) => {
+                console.log("삭제버튼이 클릭되었습니다.")
+
+                const deleteBtn = event.target;
+
+                const commentId = deleteBtn.getAttribute("data-comment-id");
+
+                const url = `/api/comments/${commentId}`;
+
+                fetch(url, {
+                    method: "DELETE",
+
+                }).then(response => {
+                    if(!response.ok){
+                        alert("댓글 삭제 실패..!");
+                        return;
+                    }
+                    const target = document.querySelector(`#comment-id`);
+                    target.remove();
+
+                    const msg = `${commentId}번 댓글을 삭제했습니다.`;
+                    alert(msg);
+                    window.location.reload();
+                })
+            })
+        })
+    }
+</script>
 </body>
 </html>
