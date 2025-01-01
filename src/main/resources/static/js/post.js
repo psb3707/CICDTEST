@@ -1,8 +1,22 @@
 const deleteButton = document.getElementById('delete-btn');
-const modifyButton = document.getElementById('modify-btn')
-const createButton = document.getElementById('create-btn')
-const createNewButton = document.getElementById('create-btn-empty')
+const modifyButton = document.getElementById('modify-btn');
+const createButton = document.getElementById('create-btn');
+const createNewButton = document.getElementById('create-btn-empty');
+const likeBtn = document.getElementById('like-btn');
 
+if(likeBtn){
+    likeBtn.addEventListener('click', event => {
+        console.log("좋아요 버튼");
+        let id = document.getElementById('post-id').value;
+
+        fetch(`/api/posts/likes/${id}`,{
+            method: "PUT"
+        }).then(()=>{
+            alert('좋아요를 눌렀습니다.');
+            window.location.reload();
+        })
+    })
+}
 
 if (deleteButton) {
     deleteButton.addEventListener('click', event => {
@@ -40,6 +54,7 @@ if (modifyButton) {
 
 if (createButton) {
     createButton.addEventListener('click', event =>{
+
         fetch("/api/posts", {
             method: "POST",
             headers: {
@@ -48,6 +63,7 @@ if (createButton) {
             body: JSON.stringify({
                 title: document.getElementById("title").value,
                 content: document.getElementById("content").value,
+                tags: document.getElementById("tag").value.split(',').map(tag => tag.trim())
             }),
         }).then(() => {
             alert("등록이 완료되었습니다.");

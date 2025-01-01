@@ -1,12 +1,12 @@
 package study.mypost.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import study.mypost.domain.Post;
-import study.mypost.domain.PostLike;
-import study.mypost.domain.PostTag;
-import study.mypost.domain.Tag;
+import study.mypost.domain.*;
 import study.mypost.dto.PostCreateDTO;
 import study.mypost.dto.PostResponseDTO;
 import study.mypost.exception.CustomPostException;
@@ -31,9 +31,14 @@ public class PostService {
     @Transactional
     public PostResponseDTO createPost(PostCreateDTO request) {
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        Member member = (Member) authentication.getPrincipal();
+
         Post post = Post.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
+                .member(member)
                 .build();
 
         if (!request.getTags().isEmpty()) {
@@ -54,7 +59,6 @@ public class PostService {
     }
 
     public List<PostResponseDTO> getAllPosts() {
-//        List<Post> posts = postRepository.findAll();
         List<Post> posts = postRepository.findAll();
         if (posts.isEmpty()) {
             return List.of(); // 커스텀 exception 클래스 필요
@@ -63,6 +67,19 @@ public class PostService {
                 .map(PostResponseDTO::new)
                 .toList();
         return response;
+    }
+
+    public List<PostResponseDTO> getPostsByKeyword(String keyword) {
+        List<Post> posts = postRepository.getPostsByTag(keyword);
+
+        if(posts.isEmpty()) {
+            throw new CustomPostException(ErrorCode.POST_NOT_FOUND);
+        }
+
+        List<PostResponseDTO> list = posts.stream()
+                .map(PostResponseDTO::new)
+                .toList();
+        return list;
     }
 
     public List<PostResponseDTO> getPostsByTag(Long tagId) {
@@ -88,7 +105,13 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomPostException(ErrorCode.POST_NOT_FOUND));
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        Member member = (Member) authentication.getPrincipal();
+
+
         PostLike like = PostLike.builder()
+                .member(member)
                 .post(post)
                 .build();
 

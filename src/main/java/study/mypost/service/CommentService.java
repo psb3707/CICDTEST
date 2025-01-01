@@ -17,6 +17,8 @@ import study.mypost.exception.ErrorCode;
 import study.mypost.repository.CommentRepository;
 import study.mypost.repository.PostRepository;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -46,18 +48,23 @@ public class CommentService {
     @Transactional
     public Long updateComment(Long id, CommentUpdateDTO request) {
 
-        Comment comment = commentRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("No Comment"));
+        log.info(id);
 
-        comment.updateContent(request.getBody());
-
-        log.info(comment);
-
-        commentRepository.save(comment);
+        Optional<Comment> comment = commentRepository.findById(id);
 
         log.info(comment);
 
-        return comment.getId();
+        Comment comment1 = comment.get();
+
+        comment1.updateContent(request.getBody());
+
+        log.info(comment);
+
+        commentRepository.save(comment1);
+
+        log.info(comment);
+
+        return comment1.getId();
     }
 
     @Transactional

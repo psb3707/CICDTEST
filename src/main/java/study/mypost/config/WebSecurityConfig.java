@@ -20,7 +20,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
-    private final UserDetailsService userDetailsService;
+    private final UserDetailsService userService;
 
     @Bean
     public WebSecurityCustomizer configure() {
@@ -56,7 +56,7 @@ public class WebSecurityConfig {
                                                        BCryptPasswordEncoder bCryptPasswordEncoder,
                                                        UserDetailsService userDetailsService) throws Exception {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setUserDetailsService(userService);
         authProvider.setPasswordEncoder(bCryptPasswordEncoder);
         return new ProviderManager(authProvider);
     }

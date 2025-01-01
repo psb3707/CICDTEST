@@ -24,12 +24,14 @@ public class Post {
     private Long id;
 
     private String title;
+
     private String content;
 
     @Builder
-    public Post(String title, String content, List<PostTag> postTags) {
+    public Post(String title, String content, List<PostTag> postTags, Member member) {
         this.title = title;
         this.content = content;
+        this.member = member;
         this.postTags = postTags != null ? postTags : new ArrayList<>(); // null 체크 후 초기화
     }
 
