@@ -35,7 +35,7 @@ public class Post {
         this.postTags = postTags != null ? postTags : new ArrayList<>(); // null 체크 후 초기화
     }
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
